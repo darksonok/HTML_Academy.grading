@@ -1,10 +1,57 @@
 import * as S from './booking-modal.styled';
 import { ReactComponent as IconClose } from '../../../../assets/img/icon-close.svg';
+import api from '../../../../services/api';
+import React, { useState } from 'react';
+import { APIRoute } from '../../../../const';
 
-const BookingModal = () => (
+type BookingModalProps = {
+  onCloseButtonClick:() => void
+}
+
+const BookingModal = ({ onCloseButtonClick }: BookingModalProps) => {
+
+  const [formData, setFormData] = useState({
+    'booking-name': '',
+    'booking-phone': '',
+    'booking-people': '',
+    'booking-legal': false
+  })
+
+  const postQuestBooking = async () => {
+    const payload = {
+      name: formData['booking-name'],
+      phone: formData['booking-phone'],
+      peopleCount: Number(formData['booking-people']),
+      isLegal: formData['booking-legal']
+    };
+    console.log(formData);
+    console.log(payload);
+    await api.post(APIRoute.Order, payload)
+    .then(() => console.log(formData))
+  };
+
+  const onChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const {name, value} = evt.target;
+    setFormData({...formData, [name]: value});
+  }
+
+  const onSubmit = (evt: React.FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+    postQuestBooking();
+  }
+
+  const onCheckboxClick = () => {
+    formData['booking-legal']
+    ? setFormData({...formData, 'booking-legal': false})
+    : setFormData({...formData, 'booking-legal': true})
+  }
+
+  return (
   <S.BlockLayer>
     <S.Modal>
-      <S.ModalCloseBtn>
+      <S.ModalCloseBtn
+      onClick={onCloseButtonClick}
+      >
         <IconClose width="16" height="16" />
         <S.ModalCloseLabel>Закрыть окно</S.ModalCloseLabel>
       </S.ModalCloseBtn>
@@ -13,6 +60,7 @@ const BookingModal = () => (
         action="https://echo.htmlacademy.ru"
         method="post"
         id="booking-form"
+        onSubmit={onSubmit}
       >
         <S.BookingField>
           <S.BookingLabel htmlFor="booking-name">Ваше Имя</S.BookingLabel>
@@ -21,6 +69,7 @@ const BookingModal = () => (
             id="booking-name"
             name="booking-name"
             placeholder="Имя"
+            onChange={onChange}
             required
           />
         </S.BookingField>
@@ -33,6 +82,7 @@ const BookingModal = () => (
             id="booking-phone"
             name="booking-phone"
             placeholder="Телефон"
+            onChange={onChange}
             required
           />
         </S.BookingField>
@@ -45,6 +95,7 @@ const BookingModal = () => (
             id="booking-people"
             name="booking-people"
             placeholder="Количество участников"
+            onChange={onChange}
             required
           />
         </S.BookingField>
@@ -54,6 +105,7 @@ const BookingModal = () => (
             type="checkbox"
             id="booking-legal"
             name="booking-legal"
+            onChange={onCheckboxClick}
             required
           />
           <S.BookingCheckboxLabel
@@ -73,5 +125,6 @@ const BookingModal = () => (
     </S.Modal>
   </S.BlockLayer>
 );
+}
 
 export default BookingModal;

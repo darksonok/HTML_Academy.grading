@@ -11,7 +11,7 @@ function NotFound () {
     <MainLayout>
     <S.Main forwardedAs="main">
       <PageHeading>
-        <PageTitle>Нет такой страницы</PageTitle>
+        <PageTitle>К сожалению пока такой страницы нет, но мы ее скоро придумаем</PageTitle>
         <PageSubtext>квесты в Санкт-Петербурге</PageSubtext>
       </PageHeading>
     </S.Main>
